@@ -18,7 +18,6 @@ if ($user_id === 1) {
 		err ( 'invalid api token for that user!' );
 	}
 }
-var_dump ( $_POST );
 $c = 0;
 if (! empty ( $_FILES )) {
 	$c += count ( $_FILES );

@@ -8,3 +8,4 @@ composer.phar
 /vendor/
 composer.lock
 #</composer>
+/config.inc.php

@@ -1,0 +1,125 @@
+<?php
+declare(strict_types = 1);
+require_once (__DIR__ . '/../api_common.inc.php');
+$resp = new Response ();
+header ( "content-type: application/json" );
+register_shutdown_function ( function () use (&$resp) {
+	echo json_encode ( ( array ) $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+} );
+$user_id = filter_var ( ($_POST ['user_id'] ?? 1), FILTER_VALIDATE_INT );
+if (false === $user_id) {
+	err ( 'invalid user_id supplied!' );
+}
+if ($user_id === 1) {
+	// ANONYMOUS_UPLOADS_NEEDS_NO_TOKEN
+} else {
+	if (! validate_api_token ( $user_id, ( string ) ($_POST ['api_token'] ?? '') )) {
+		// TODO: check, is mysql here vulnerable to a timing attack?
+		err ( 'invalid api token for that user!' );
+	}
+}
+var_dump ( $_POST );
+$c = 0;
+if (! empty ( $_FILES )) {
+	$c += count ( $_FILES );
+}
+if (isset ( $_POST ['upload_raw'] )) {
+	++ $c;
+}
+if ($c > 1) {
+	err ( 'provided more than 1 paste data source!' );
+}
+if ($c < 1) {
+	err ( 'no paste data provided!' );
+}
+$db->beginTransaction ();
+if (! empty ( $_FILES )) {
+	// file upload mode
+	err ( 'FILE UPLOADS ARE NOT YET IMPLEMENTED!', 1, 500 );
+} else {
+	// string upload mode
+	$paste = ( string ) $_POST ['upload_raw'];
+	$hash = h_string ( $paste );
+	$existed = false;
+	$hashid = rawinsert ( $hash, strlen ( $hash ), $existed );
+	if ($existed) {
+		unset ( $_POST ['upload_raw'], $paste );
+	}
+	$up = new Uploads ();
+	$up->content_type = $_POST ['upload_content_type'] ?? NULL;
+	$up->filename = $_POST ['upload_name'] ?? NULL;
+	$up->id = NULL;
+	$up->password_hash = (isset ( $_POST ['upload_password'] ) ? p_hash ( 'upload_password' ) : NULL);
+	$up->password_hash_version = 1; // << hardcoded
+	$up->raw_file_id = $hashid;
+	$up->upload_date = NULL;
+	$up->user_id = $user_id;
+	$up->is_hidden = $_POST ['upload_hidden'] ?? false;
+	$up->insertSelf ();
+	$db->commit ();
+	if (! $existed) {
+		file_put_contents ( UPLOAD_DIR . $hashid, $paste );
+	} else {
+		assert ( ! file_exists ( UPLOAD_DIR . $hashid ) );
+	}
+	$resp->status_code = 0;
+	$resp->status_code = 'OK';
+	$resp->url = 'id=' . $up->id;
+	if ($up->is_hidden) {
+		$resp->url = '&hash=' . $hash;
+	}
+}
+/**
+ * insert raw file record
+ *
+ * @param string $hash        	
+ * @param bool $existed        	
+ * @return int raw file id
+ */
+function rawinsert(string $hash, int $size, bool &$existed = NULL): int {
+	global $db;
+	$stm = $db->prepare ( 'INSERT INTO raw_files (hash,size) VALUES(:hash,:size) ON DUPLICATE KEY UPDATE `last_accessed` = NOW();' );
+	$stm->execute ( array (
+			':hash' => $hash,
+			':size' => $size 
+	) );
+	$rc = $stm->rowCount ();
+	if ($rc === 2) {
+		$existed = true;
+	} elseif ($rc === 1) {
+		$existed = false;
+	} else {
+		throw new \LogicException ( 'this INSERT statement should always return 1 or 2, but it did not! returned: ' . hhb_var_dump ( $rc ) );
+	}
+	return filter_var ( $db->lastInsertId (), FILTER_VALIDATE_INT );
+}
+function h_file(string $filename): string {
+	// tiger160,4 -> base64url
+	$hash = hash_file ( 'tiger160,4', $filename, true );
+	$hash = base64url_encode ( $hash );
+	return $hash;
+}
+function h_string(string $str): string {
+	// tiger160,4 -> base64url
+	$hash = hash ( 'tiger160,4', $str, true );
+	$hash = base64url_encode ( $hash );
+	return $hash;
+}
+function base64url_encode($data) {
+	return rtrim ( strtr ( base64_encode ( $data ), '+/', '-_' ), '=' );
+}
+function base64url_decode($data) {
+	return base64_decode ( str_pad ( strtr ( $data, '-_', '+/' ), strlen ( $data ) % 4, '=', STR_PAD_RIGHT ) );
+}
+class Response {
+	public $status_code = 1;
+	public $message = 'unknown error';
+	public $url = '';
+}
+function err(string $message, int $status_code = 1, int $http_error_code = 400) {
+	global $resp;
+	http_response_code ( $http_error_code );
+	$resp->status_code = $status_code;
+	$resp->message = 'error: ' . $message;
+	die ();
+}

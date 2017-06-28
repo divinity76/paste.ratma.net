@@ -40,7 +40,7 @@ if (! empty ( $_FILES )) {
 	$paste = ( string ) $_POST ['upload_raw'];
 	$hash = h_string ( $paste );
 	$existed = false;
-	$hashid = rawinsert ( $hash, strlen ( $hash ), $existed );
+	$hashid = rawinsert ( $hash, strlen ( $paste ), $existed );
 	if ($existed) {
 		unset ( $_POST ['upload_raw'], $paste );
 	}

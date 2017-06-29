@@ -4,7 +4,13 @@ require_once (__DIR__ . '/../api_common.inc.php');
 $resp = new Response ();
 header ( "content-type: application/json" );
 register_shutdown_function ( function () use (&$resp) {
-	echo json_encode ( ( array ) $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	$resp = ( array ) $resp;
+	foreach ( $resp as $key => $val ) {
+		if (! isset ( $val )) {
+			unset ( $resp [$key] );
+		}
+	}
+	echo json_encode ( $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 } );
 $user_id = filter_var ( ($_POST ['user_id'] ?? 1), FILTER_VALIDATE_INT );
 if (false === $user_id) {

@@ -28,6 +28,7 @@ class Uploads {
 	/** @var integer $password_hash_version */
 	public $password_hash_version;
 	public $upload_date;
+	public $expire_date;
 	public function insertSelf() {
 		global $db;
 		if (empty ( $this->id )) {
@@ -53,6 +54,9 @@ class Uploads {
 		}
 		if (empty ( $this->upload_date )) {
 			unset ( $this->upload_date );
+		}
+		if (empty ( $this->expire_date )) {
+			unset ( $this->expire_date );
 		}
 		$this->is_hidden = filter_var ( $this->is_hidden, FILTER_VALIDATE_BOOLEAN );
 		$arr = ( array ) $this;

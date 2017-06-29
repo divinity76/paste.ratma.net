@@ -54,6 +54,20 @@ if (! empty ( $_FILES )) {
 	$up->upload_date = NULL;
 	$up->user_id = $user_id;
 	$up->is_hidden = $_POST ['upload_hidden'] ?? false;
+	{
+		$edate = filter_var ( $_POST ['expire_seconds'] ?? false, FILTER_VALIDATE_INT, [ 
+				'options' => [ 
+						'min_range' => 1,
+						'max_range' => 1 * 60 * 60 * 24 * 365 
+				] 
+		] );
+		if (false === $edate) {
+			$edate = 1 * 60 * 60 * 24 * 365;
+		}
+		$up->expire_date = date ( 'Y-m-d H:i:s', time () + $edate );
+		$resp->expire_date = $up->expire_date;
+		unset ( $edate );
+	}
 	$up->insertSelf ();
 	$db->commit ();
 	if (! $existed) {
@@ -117,6 +131,7 @@ class Response {
 	public $status_code = 1;
 	public $message = 'unknown error';
 	public $url = '';
+	public $expire_date = '';
 }
 function err(string $message, int $status_code = 1, int $http_error_code = 400) {
 	global $resp;

@@ -91,7 +91,7 @@ if (! empty ( $_FILES )) {
 		$resp->url .= '&hash=' . urlencode ( $hash );
 	}
 	if (! empty ( $up->password_hash )) {
-		$resp->url .= "&password=****";
+		$resp->url .= "&password=";
 	}
 }
 /**

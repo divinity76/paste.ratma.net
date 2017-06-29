@@ -149,3 +149,16 @@ function err(string $message, int $status_code = 1, int $http_error_code = 400) 
 	$resp->message = 'error: ' . $message;
 	die ();
 }
+function validate_api_token(int $user_id, string $token): bool {
+	if ($user_id === 1) {
+		// ANONYMOUS_UPLOADS_NEEDS_NO_TOKEN
+		return true;
+	}
+	global $db;
+	$stm = $db->prepare ( 'SELECT COUNT(*) FROM users WHERE id = ? AND api_token = ? AND api_token IS NOT NULL' );
+	$stm->execute ( array (
+			$user_id,
+			$token 
+	) );
+	return ! ! ($stm->fetchAll ( PDO::FETCH_NUM ) [0] [0]);
+}

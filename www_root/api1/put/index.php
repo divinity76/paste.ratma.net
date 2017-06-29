@@ -91,7 +91,7 @@ if (! empty ( $_FILES )) {
 		$resp->url .= '&hash=' . base64url_encode ( $hash );
 	}
 	if (! empty ( $up->password_hash )) {
-		$resp->url .= "&password=";
+		$resp->url .= "&password=" . urlencode ( $_POST ['upload_password'] );
 	}
 	$resp->url .= '/' . urlencode ( $up->filename );
 	$resp->url = $_SERVER ['REQUEST_SCHEME'] . '://paste.ratma.net/api1/get/' . $resp->url;
@@ -139,6 +139,8 @@ class Response {
 	public $message = 'unknown error';
 	public $url = '';
 	public $expire_date = '';
+	/** @var string[]|null $warnings */
+	public $warnings = [ ];
 }
 function err(string $message, int $status_code = 1, int $http_error_code = 400) {
 	global $resp;

@@ -13,7 +13,7 @@ register_shutdown_function ( function () use (&$resp) {
 	if (empty ( $resp ['status_code'] )) {
 		$resp ['status_code'] = 0;
 	}
-	echo json_encode ( $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | ~ JSON_HEX_AMP );
+	echo json_encode ( $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 } );
 $user_id = filter_var ( ($_POST ['user_id'] ?? 1), FILTER_VALIDATE_INT );
 if (false === $user_id) {

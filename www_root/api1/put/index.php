@@ -62,10 +62,13 @@ if (! empty ( $_FILES )) {
 		assert ( ! file_exists ( UPLOAD_DIR . $hashid ) );
 	}
 	$resp->status_code = 0;
-	$resp->status_code = 'OK';
-	$resp->url = 'id=' . $up->id;
+	$resp->message = 'OK';
+	$resp->url = 'id=' . urlencode ( $up->id );
 	if ($up->is_hidden) {
-		$resp->url = '&hash=' . $hash;
+		$resp->url .= '&hash=' . urlencode ( $hash );
+	}
+	if (! empty ( $up->password_hash )) {
+		$resp->url .= "&password=****";
 	}
 }
 /**

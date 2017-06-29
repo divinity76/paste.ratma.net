@@ -88,7 +88,7 @@ if (! empty ( $_FILES )) {
 	$resp->message = 'OK';
 	$resp->url = 'id=' . urlencode ( $up->id );
 	if ($up->is_hidden) {
-		$resp->url .= '&hash=' . urlencode ( $hash );
+		$resp->url .= '&hash=' . base64url_encode ( $hash );
 	}
 	if (! empty ( $up->password_hash )) {
 		$resp->url .= "&password=";
@@ -119,15 +119,11 @@ function rawinsert(string $hash, int $size, bool &$existed = NULL): int {
 	return filter_var ( $db->lastInsertId (), FILTER_VALIDATE_INT );
 }
 function h_file(string $filename): string {
-	// tiger160,4 -> base64url
 	$hash = hash_file ( 'tiger160,4', $filename, true );
-	$hash = base64url_encode ( $hash );
 	return $hash;
 }
 function h_string(string $str): string {
-	// tiger160,4 -> base64url
 	$hash = hash ( 'tiger160,4', $str, true );
-	$hash = base64url_encode ( $hash );
 	return $hash;
 }
 function base64url_encode($data) {

@@ -6,9 +6,12 @@ header ( "content-type: application/json" );
 register_shutdown_function ( function () use (&$resp) {
 	$resp = ( array ) $resp;
 	foreach ( $resp as $key => $val ) {
-		if (! isset ( $val )) {
+		if (empty ( $val )) {
 			unset ( $resp [$key] );
 		}
+	}
+	if (empty ( $resp ['status_code'] )) {
+		$resp ['status_code'] = 0;
 	}
 	echo json_encode ( $resp, JSON_BIGINT_AS_STRING | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 } );

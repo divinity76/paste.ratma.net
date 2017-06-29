@@ -94,6 +94,7 @@ if (! empty ( $_FILES )) {
 		$resp->url .= "&password=";
 	}
 	$resp->url .= '/' . urlencode ( $up->filename );
+	$resp->url = $_SERVER ['REQUEST_SCHEME'] . '://paste.ratma.net/api1/get/' . $resp->url;
 }
 /**
  * insert raw file record

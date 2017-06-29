@@ -41,7 +41,7 @@ class Uploads {
 			throw new LogicException ( 'raw_file_id must not be empty at this point!' );
 		}
 		if (empty ( $this->filename )) {
-			unset ( $this->filename );
+			$this->filename = "untitled.txt";
 		}
 		if (empty ( $this->content_type )) {
 			unset ( $this->content_type );

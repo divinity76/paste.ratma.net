@@ -93,6 +93,7 @@ if (! empty ( $_FILES )) {
 	if (! empty ( $up->password_hash )) {
 		$resp->url .= "&password=";
 	}
+	$resp->url .= '/' . urlencode ( $up->filename );
 }
 /**
  * insert raw file record

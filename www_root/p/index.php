@@ -108,7 +108,7 @@ echo 'filename: ' . tohtml ( ( string ) $row->filename ) . "\n";
 echo 'file type:' . tohtml ( ( string ) $row->content_type ) . "\n";
 echo 'upload date:' . tohtml ( ( string ) $row->upload_date ) . "\n";
 echo 'expire date:' . tohtml ( ( string ) $row->expire_date ) . "\n";
-echo 'size ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "\n";
+echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "\n";
 ?>
 </pre>
 	<pre style="background-color: aliceblue;" class="prettyprint"

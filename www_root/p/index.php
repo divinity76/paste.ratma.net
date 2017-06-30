@@ -15,6 +15,10 @@ if (false !== strpos ( ($info ['query'] ?? ''), '/' )) {
 	$info ['filename'] = substr ( $info ['query'], strpos ( $info ['query'], '/' ) + 1 );
 	$info ['query'] = parse_url ( '?' . substr ( $info ['query'], 0, strpos ( $info ['query'], '/' ) ), PHP_URL_QUERY );
 }
+if (false !== strpos ( ($info ['path']), '/' )) {
+	$info ['filename'] = substr ( $info ['path'], strpos ( $info ['path'], '/' ) + 1 );
+	$info ['path'] = parse_url ( substr ( $info ['path'], 0, strpos ( $info ['path'], '/' ) ), PHP_URL_PATH );
+}
 parse_str ( ($info ['query'] ?? ''), $info ['query'] );
 // hhb_var_dump ( $info ) & die ();
 $id = filter_var ( $info ['path'], FILTER_VALIDATE_INT, [ 

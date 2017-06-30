@@ -50,11 +50,36 @@ if (! empty ( $_FILES )) {
 	$hash = h_string ( $paste );
 	$existed = false;
 	$hashid = rawinsert ( $hash, strlen ( $paste ), $existed );
+	$up = new Uploads ();
+	if (true || empty ( $_POST ['upload_content_type'] )) {
+		// --dereference if tmpfile() generates symlinks,
+		// --preserve-date for performance
+		// -E for better error handling (if any)
+		// --brief and --mime should be obvious.
+		// file --brief --mime --dereference -E --preserve-date URI
+		// TODO: $existed optimizations
+		$tmp = tmpfile ();
+		fwrite ( $tmp, $paste, 500 );
+		$tmpuri = stream_get_meta_data ( $tmp ) ['uri'];
+		$tmpoutput = [ ];
+		$tmpret = - 1;
+		$tmpcmd = '/usr/bin/file --brief --mime --dereference -E --preserve-date ' . escapeshellarg ( $tmpuri ) . ' 2>&1';
+		exec ( $tmpcmd, $tmpoutput, $tmpret );
+		if ($tmpret !== 0) {
+			throw new LogicException ( '/usr/bin/file returned nonzero! cmd:' . $tmpcmd );
+		}
+		if (count ( $tmpoutput !== 1 )) {
+			throw new LogicException ( '/usr/bin/file did not return 1 line! cmd:' . $tmpcmd );
+		}
+		$up->content_type = $tmpoutput [0];
+		unset ( $tmp, $tmpuri, $tmpret, $tmpcmd, $tmpoutput );
+	} else {
+		// disabled for security reasons, until i can think of a SAFE way to do this...
+		$up->content_type = $_POST ['upload_content_type'];
+	}
 	if ($existed) {
 		unset ( $_POST ['upload_raw'], $paste );
 	}
-	$up = new Uploads ();
-	$up->content_type = $_POST ['upload_content_type'] ?? NULL;
 	$up->filename = $_POST ['upload_name'] ?? NULL;
 	$up->id = NULL;
 	$up->password_hash = (isset ( $_POST ['upload_password'] ) ? p_hash ( 'upload_password' ) : NULL);

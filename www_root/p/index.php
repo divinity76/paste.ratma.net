@@ -113,11 +113,11 @@ body {
 <body>
 <span>
 <?php
-echo 'name: ' . tohtml ( ( string ) $row->filename ) . "<br/>";
-echo 'type:' . tohtml ( ( string ) $row->content_type ) . "<br/>";
-echo 'upload date: ' . tohtml ( ( string ) $row->upload_date ) . "<br/>";
-echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . "<br/>";
-echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "<br/>";
+echo 'name: ' . tohtml ( ( string ) $row->filename ) . "<br/>\n";
+echo 'type:' . tohtml ( ( string ) $row->content_type ) . "<br/>\n";
+echo 'upload date: ' . tohtml ( ( string ) $row->upload_date ) . "<br/>\n";
+echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . "<br/>\n";
+echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "<br/>\n";
 ?>
 </span>
 	<pre style="background-color: aliceblue;" class="prettyprint"

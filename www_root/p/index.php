@@ -16,7 +16,7 @@ if (false !== strpos ( $info ['query'], '/' )) {
 	$info ['query'] = parse_url ( '?' . substr ( $info ['query'], 0, strpos ( $info ['query'], '/' ) ), PHP_URL_QUERY );
 }
 parse_str ( $info ['query'], $info ['query'] );
-hhb_var_dump ( $info ) & die ();
+// hhb_var_dump ( $info ) & die ();
 $id = filter_var ( $info ['path'], FILTER_VALIDATE_INT, [ 
 		'options' => [ 
 				'min_range' => 1 

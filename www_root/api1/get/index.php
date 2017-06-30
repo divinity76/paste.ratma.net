@@ -2,11 +2,8 @@
 declare(strict_types = 1);
 require_once (__DIR__ . '/../api_common.inc.php');
 http_response_code ( 500 );
-$id = filter_var ( $_GET ['id'], FILTER_VALIDATE_INT, [ 
-		'options' => [ 
-				'min_range' => 1 
-		] 
-] );
+
+$id = ( string ) $_POST ['id'] ?? NULL;
 if (false === $id) {
 	http_response_code ( 400 );
 	die ( 'invalid id!' );
@@ -26,9 +23,8 @@ $stm->execute ();
 $row = $stm->fetchAll ( PDO::FETCH_CLASS, 'res' );
 unset ( $stm );
 if (empty ( $row )) {
-	// not found
 	http_response_code ( 404 );
-	die ();
+	die ( 'not found' );
 }
 $row = $row [0];
 /** @var Res $row */
@@ -38,7 +34,7 @@ if (strtotime ( $row->expire_date ) <= time ()) {
 	die ( 'this upload has expired.' );
 }
 if ($row->is_hidden) {
-	$hash = $_GET ['hash'] ?? NULL;
+	$hash = $_POST ['hash'] ?? NULL;
 	if (empty ( $hash )) {
 		http_response_code ( 403 );
 		die ( 'this upload is hidden, you need the hidden hash to view hidden uploads, and you did not provide one.' );
@@ -51,7 +47,7 @@ if ($row->is_hidden) {
 	unset ( $hash );
 }
 if (! empty ( $row->password_hash )) {
-	$password = ( string ) $_GET ['password'] ?? NULL;
+	$password = ( string ) $_POST ['password'] ?? NULL;
 	if (empty ( $password )) {
 		http_response_code ( 403 );
 		die ( 'this upload is password protected, and you did not provide a password.' );
@@ -64,4 +60,4 @@ if (! empty ( $row->password_hash )) {
 header ( "content-type: " . $row->content_type );
 // /internal_nginx_serve_upload
 header ( "X-Accel-Redirect: /internal_nginx_serve_upload/" . $row->raw_file_id );
-
+die ();//we're done here, nginx takes care of the rest.

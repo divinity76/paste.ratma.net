@@ -116,7 +116,7 @@ body {
 echo 'name: ' . tohtml ( ( string ) $row->filename ) . "<br/>\n";
 echo 'type:' . tohtml ( ( string ) $row->content_type ) . "<br/>\n";
 echo 'upload date: ' . tohtml ( ( string ) $row->upload_date ) . "<br/>\n";
-echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . "<br/>\n";
+echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . " (that means " . number_format ( ((time () - strtotime ( $row->expire_date )) / 60 / 60 / 24), 2 ) . " days remains )<br/>\n";
 echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "<br/>\n";
 ?>
 </span>

@@ -86,15 +86,14 @@ if (! empty ( $_FILES )) {
 	}
 	$resp->status_code = 0;
 	$resp->message = 'OK';
-	$resp->url = 'id=' . urlencode ( $up->id );
+	$resp->url = urlencode ( $up->id );
 	if ($up->is_hidden) {
-		$resp->url .= '&hash=' . base64url_encode ( $hash );
+		$resp->url .= '?hash=' . base64url_encode ( $hash );
 	}
-	if (! empty ( $up->password_hash )) {
-		$resp->url .= "&password=" . urlencode ( $_POST ['upload_password'] );
+	if (! emty ( $up->filename ) && $up->filename !== 'untitled.txt') {
+		$resp->url .= '/' . urlencode ( $up->filename );
 	}
-	$resp->url .= '/' . urlencode ( $up->filename );
-	$resp->url = $_SERVER ['REQUEST_SCHEME'] . '://paste.ratma.net/api1/get/' . $resp->url;
+	$resp->url = $_SERVER ['REQUEST_SCHEME'] . '://paste.ratma.net/p/' . $resp->url;
 }
 /**
  * insert raw file record

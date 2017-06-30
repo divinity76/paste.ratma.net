@@ -115,7 +115,7 @@ function rawinsert(string $hash, int $size, bool &$existed = NULL): int {
 	} elseif ($rc === 1) {
 		$existed = false;
 	} else {
-		throw new \LogicException ( 'this INSERT statement should always return 1 or 2, but it did not! returned: ' . hhb_var_dump ( $rc ) );
+		throw new \LogicException ( 'this INSERT statement should always return 1 or 2, but it did not! returned: ' . return_var_dump ( $rc ) );
 	}
 	return filter_var ( $db->lastInsertId (), FILTER_VALIDATE_INT );
 }

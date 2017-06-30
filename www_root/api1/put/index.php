@@ -90,7 +90,7 @@ if (! empty ( $_FILES )) {
 	if ($up->is_hidden) {
 		$resp->url .= '?hash=' . base64url_encode ( $hash );
 	}
-	if (! emty ( $up->filename ) && $up->filename !== 'untitled.txt') {
+	if (! empty ( $up->filename ) && $up->filename !== 'untitled.txt') {
 		$resp->url .= '/' . urlencode ( $up->filename );
 	}
 	$resp->url = $_SERVER ['REQUEST_SCHEME'] . '://paste.ratma.net/p/' . $resp->url;

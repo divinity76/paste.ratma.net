@@ -100,7 +100,7 @@ echo tohtml ( ( string ) $id );
 <body>
 <pre style="background-color:aliceblue;" class="prettyprint" id="paste_raw" >
 <?php
-echo tohtml ( file_get_contents ( __DIR__ . '/../../uploads/' . $id ) );
+echo tohtml ( file_get_contents ( __DIR__ . '/../../uploads/' . $row->raw_file_id ) );
 ?>
 </pre>
 </body>

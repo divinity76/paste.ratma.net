@@ -66,10 +66,10 @@ if (! empty ( $_FILES )) {
 		$tmpcmd = '/usr/bin/file --brief --mime --dereference -E --preserve-date ' . escapeshellarg ( $tmpuri ) . ' 2>&1';
 		exec ( $tmpcmd, $tmpoutput, $tmpret );
 		if ($tmpret !== 0) {
-			throw new LogicException ( '/usr/bin/file returned nonzero! cmd:' . $tmpcmd );
+			throw new LogicException ( '/usr/bin/file returned nonzero! retval: ' . return_var_dump ( $tmpret ) . '. cmd:' . $tmpcmd );
 		}
 		if (count ( $tmpoutput !== 1 )) {
-			throw new LogicException ( '/usr/bin/file did not return 1 line! cmd:' . $tmpcmd );
+			throw new LogicException ( '/usr/bin/file did not return 1 line! lines: ' . return_var_dump ( $tmpoutput ) . '.  cmd:' . $tmpcmd );
 		}
 		$up->content_type = $tmpoutput [0];
 		unset ( $tmp, $tmpuri, $tmpret, $tmpcmd, $tmpoutput );

@@ -40,7 +40,7 @@ class Res {
 	public $raw_file_hash;
 	public $upload_date;
 }
-$stm = $db->prepare ( 'SELECT uploda_date,filename,content_type,is_hidden,password_hash,expire_date,raw_files.id AS raw_file_id,raw_files.hash AS raw_file_hash FROM uploads INNER JOIN raw_files ON uploads.raw_file_id = raw_files.id WHERE uploads.id= ? LIMIT 1' );
+$stm = $db->prepare ( 'SELECT upload_date,filename,content_type,is_hidden,password_hash,expire_date,raw_files.id AS raw_file_id,raw_files.hash AS raw_file_hash FROM uploads INNER JOIN raw_files ON uploads.raw_file_id = raw_files.id WHERE uploads.id= ? LIMIT 1' );
 $stm->bindValue ( 1, $id, PDO::PARAM_INT );
 $stm->execute ();
 $row = $stm->fetchAll ( PDO::FETCH_CLASS, 'res' );

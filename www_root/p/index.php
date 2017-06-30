@@ -38,8 +38,9 @@ class Res {
 	public $expire_date;
 	public $raw_file_id;
 	public $raw_file_hash;
+	public $upload_date;
 }
-$stm = $db->prepare ( 'SELECT filename,content_type,is_hidden,password_hash,expire_date,raw_files.id AS raw_file_id,raw_files.hash AS raw_file_hash FROM uploads INNER JOIN raw_files ON uploads.raw_file_id = raw_files.id WHERE uploads.id= ? LIMIT 1' );
+$stm = $db->prepare ( 'SELECT uploda_date,filename,content_type,is_hidden,password_hash,expire_date,raw_files.id AS raw_file_id,raw_files.hash AS raw_file_hash FROM uploads INNER JOIN raw_files ON uploads.raw_file_id = raw_files.id WHERE uploads.id= ? LIMIT 1' );
 $stm->bindValue ( 1, $id, PDO::PARAM_INT );
 $stm->execute ();
 $row = $stm->fetchAll ( PDO::FETCH_CLASS, 'res' );
@@ -100,6 +101,14 @@ echo tohtml ( ( string ) $id );
 	src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body>
+	<pre>
+<?php
+echo 'filename: ' . tohtml ( ( string ) $row->filename ) . "\n";
+echo 'file type:' . tohtml ( ( string ) $row->content_type ) . "\n";
+echo 'upload date:' . tohtml ( ( string ) $row->upload_date ) . "\n";
+echo 'expire date:' . tohtml ( ( string ) $row->expire_date ) . "\n";
+?>
+</pre>
 	<pre style="background-color: aliceblue;" class="prettyprint"
 		id="paste_raw">
 <?php

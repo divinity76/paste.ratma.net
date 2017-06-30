@@ -68,7 +68,7 @@ if (! empty ( $_FILES )) {
 		if ($tmpret !== 0) {
 			throw new LogicException ( '/usr/bin/file returned nonzero! retval: ' . return_var_dump ( $tmpret ) . '. cmd:' . $tmpcmd );
 		}
-		if (count ( $tmpoutput !== 1 )) {
+		if (count ( $tmpoutput ) !== 1) {
 			throw new LogicException ( '/usr/bin/file did not return 1 line! lines: ' . return_var_dump ( $tmpoutput ) . '.  cmd:' . $tmpcmd );
 		}
 		$up->content_type = $tmpoutput [0];

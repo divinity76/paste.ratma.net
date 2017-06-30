@@ -98,16 +98,25 @@ if (! empty ( $row->filename )) {
 }
 echo tohtml ( ( string ) $id );
 ?></title>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+body {
+	font-family: Roboto;
+}
+</style>
 <script
 	src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+
 </head>
 <body>
 	<pre>
 <?php
 echo 'name: ' . tohtml ( ( string ) $row->filename ) . "\n";
 echo 'type:' . tohtml ( ( string ) $row->content_type ) . "\n";
-echo 'upload date:' . tohtml ( ( string ) $row->upload_date ) . "\n";
-echo 'expire date:' . tohtml ( ( string ) $row->expire_date ) . "\n";
+echo 'upload date: ' . tohtml ( ( string ) $row->upload_date ) . "\n";
+echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . "\n";
 echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "\n";
 ?>
 </pre>

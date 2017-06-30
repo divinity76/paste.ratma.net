@@ -84,6 +84,7 @@ if (! empty ( $row->password_hash )) {
 // ///header ( "X-Accel-Redirect: /internal_nginx_serve_upload/" . $row->raw_file_id );
 // ///die ();//we're done here, nginx takes care of the rest.
 http_response_code ( 200 );
+header ( "content-type: text/html;charset=utf8" );
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -95,10 +96,12 @@ if (! empty ( $row->filename )) {
 }
 echo tohtml ( ( string ) $id );
 ?></title>
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script
+	src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body>
-<pre style="background-color:aliceblue;" class="prettyprint" id="paste_raw" >
+	<pre style="background-color: aliceblue;" class="prettyprint"
+		id="paste_raw">
 <?php
 echo tohtml ( file_get_contents ( __DIR__ . '/../../uploads/' . $row->raw_file_id ) );
 ?>

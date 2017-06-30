@@ -93,7 +93,7 @@ http_response_code ( 200 );
 if (! empty ( $row->filename )) {
 	echo tohtml ( $row->filename ) . ' - ';
 }
-echo tohtml ( $id );
+echo tohtml ( ( string ) $id );
 ?></title>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>

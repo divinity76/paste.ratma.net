@@ -72,7 +72,7 @@ if ($row->is_hidden) {
 	unset ( $hash );
 }
 if (! empty ( $row->password_hash )) {
-	$password = ( string ) $_POST ['password'] ?? NULL;
+	$password = ( string ) ($_POST ['password'] ?? NULL);
 	if (empty ( $password )) {
 		http_response_code ( 403 );
 		// FIXME: better ask for password page

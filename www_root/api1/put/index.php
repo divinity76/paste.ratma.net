@@ -135,12 +135,13 @@ function rawinsert(string $hash, int $size, bool &$existed = NULL): int {
 			':size' => $size 
 	) );
 	$rc = $stm->rowCount ();
-	if ($rc === 2) {
+	// it may return 0 if last_accessed was updated less than a second ago.
+	if ($rc === 2 || $rc === 0) {
 		$existed = true;
 	} elseif ($rc === 1) {
 		$existed = false;
 	} else {
-		throw new \LogicException ( 'this INSERT statement should always return 1 or 2, but it did not! returned: ' . return_var_dump ( $rc ) );
+		throw new \LogicException ( 'this INSERT statement should always return 0, or 1 or 2, but returned: ' . return_var_dump ( $rc ) );
 	}
 	return filter_var ( $db->lastInsertId (), FILTER_VALIDATE_INT );
 }

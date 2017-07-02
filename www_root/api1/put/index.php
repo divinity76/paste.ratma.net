@@ -153,9 +153,13 @@ function h_string(string $str): string {
 	return $hash;
 }
 class Response {
+	/** @var int $status_code */
 	public $status_code = 1;
+	/** @var string $message */
 	public $message = 'unknown error';
+	/** @var string $url */
 	public $url = '';
+	/** @var string $expire_date */
 	public $expire_date = '';
 	/** @var string[]|null $warnings */
 	public $warnings = [ ];

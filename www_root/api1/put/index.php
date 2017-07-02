@@ -138,6 +138,15 @@ function rawinsert(string $hash, int $size, bool &$existed = NULL): int {
 	// it may return 0 if last_accessed was updated less than a second ago.
 	if ($rc === 2 || $rc === 0) {
 		$existed = true;
+		if ($rc === 0) {
+			// it was less than a second since last_accessed was updated, and
+			// now lastInsertId() will be empty, so...
+			$stm = $db->prepare ( 'SELECT id FROM raw_files WHERE hash = ?' );
+			$stm->execute ( array (
+					$hash 
+			) );
+			return filter_var ( $stm->fetchAll ( PDO::FETCH_NUM ) [0] [0], FILTER_VALIDATE_INT );
+		}
 	} elseif ($rc === 1) {
 		$existed = false;
 	} else {

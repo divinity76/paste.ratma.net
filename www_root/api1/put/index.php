@@ -82,7 +82,7 @@ if (! empty ( $_FILES )) {
 	}
 	$up->filename = $_POST ['upload_name'] ?? NULL;
 	$up->id = NULL;
-	$up->password_hash = (empty ( $_POST ['upload_password'] ) ? p_hash ( 'upload_password' ) : NULL);
+	$up->password_hash = (empty ( $_POST ['upload_password'] ) ? NULL : p_hash ( 'upload_password' ));
 	$up->password_hash_version = 1; // << hardcoded
 	$up->raw_file_id = $hashid;
 	$up->upload_date = NULL;

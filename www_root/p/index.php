@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-// require_once ('hhb_.inc.php');
+require_once ('hhb_.inc.php');
 require_once (__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api1' . DIRECTORY_SEPARATOR . 'api_common.inc.php');
 header ( "content-type: text/plain;charset=utf8" );
 // hhb_var_dump ( $_GET, $_POST, file_get_contents ( 'php://input' ), $_SERVER );
@@ -15,12 +15,9 @@ if (false !== strpos ( ($info ['query'] ?? ''), '/' )) {
 	$info ['filename'] = substr ( $info ['query'], strpos ( $info ['query'], '/' ) + 1 );
 	$info ['query'] = parse_url ( '?' . substr ( $info ['query'], 0, strpos ( $info ['query'], '/' ) ), PHP_URL_QUERY );
 }
-if (false !== strpos ( ($info ['path']), '/' )) {
-	$info ['filename'] = substr ( $info ['path'], strpos ( $info ['path'], '/' ) + 1 );
-	$info ['path'] = parse_url ( substr ( $info ['path'], 0, strpos ( $info ['path'], '/' ) ), PHP_URL_PATH );
-}
+
 parse_str ( ($info ['query'] ?? ''), $info ['query'] );
-// hhb_var_dump ( $info ) & die ();
+hhb_var_dump ( $info ) & die ();
 $id = filter_var ( $info ['path'], FILTER_VALIDATE_INT, [ 
 		'options' => [ 
 				'min_range' => 1 
@@ -111,7 +108,7 @@ body {
 
 </head>
 <body>
-<span>
+	<span>
 <?php
 function human_filesize(int $size, int $precision = 2): string {
 	$units = array (

@@ -15,16 +15,14 @@ register_shutdown_function ( function () use (&$resp) {
 	}
 	echo json_encode ( $resp, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 } );
-$user_id = filter_var ( ($_POST ['user_id'] ?? 1), FILTER_VALIDATE_INT );
-if (false === $user_id) {
-	err ( 'invalid user_id supplied!' );
-}
-if ($user_id === 1) {
-	// ANONYMOUS_UPLOADS_NEEDS_NO_TOKEN
+$api_token = ( string ) ($_POST ['api_token'] ?? '');
+if (empty ( $api_token )) {
+	$user_id = 1; // 1 is anonymous, and requires no token.
 } else {
-	if (! validate_api_token ( $user_id, ( string ) ($_POST ['api_token'] ?? '') )) {
+	$user_id = NULL;
+	if (! validate_api_token ( $api_token, $user_id )) {
 		// TODO: check, is mysql here vulnerable to a timing attack?
-		err ( 'invalid api token for that user!' );
+		err ( 'invalid api token!' );
 	}
 }
 $c = 0;
@@ -45,6 +43,7 @@ if (! empty ( $_FILES )) {
 	// file upload mode
 	err ( 'FILE UPLOADS ARE NOT YET IMPLEMENTED!', 1, 500 );
 } else {
+	
 	// string upload mode
 	$paste = ( string ) $_POST ['upload_raw'];
 	$hash = h_string ( $paste );
@@ -65,6 +64,7 @@ if (! empty ( $_FILES )) {
 		$tmpret = - 1;
 		$tmpcmd = '/usr/bin/file --brief --mime --dereference -E --preserve-date ' . escapeshellarg ( $tmpuri ) . ' 2>&1';
 		exec ( $tmpcmd, $tmpoutput, $tmpret );
+		fclose ( $tmp );
 		if ($tmpret !== 0) {
 			throw new LogicException ( '/usr/bin/file returned nonzero! retval: ' . return_var_dump ( $tmpret ) . '. cmd:' . $tmpcmd );
 		}
@@ -89,14 +89,22 @@ if (! empty ( $_FILES )) {
 	$up->user_id = $user_id;
 	$up->is_hidden = $_POST ['upload_hidden'] ?? false;
 	{
-		$edate = filter_var ( $_POST ['expire_seconds'] ?? false, FILTER_VALIDATE_INT, [ 
-				'options' => [ 
-						'min_range' => 1,
-						'max_range' => 1 * 60 * 60 * 24 * 365 
-				] 
-		] );
-		if (false === $edate) {
+		$edate = $_POST ['expire_seconds'] ?? NULL;
+		if ($edate === NULL) {
 			$edate = 1 * 60 * 60 * 24 * 365;
+		} else {
+			$edate = filter_var ( $edate, FILTER_VALIDATE_INT, [ 
+					'options' => [ 
+							'min_range' => 1,
+							'max_range' => 1 * 60 * 60 * 24 * 365,
+							'defualt' => false 
+					] 
+			] );
+			if (false === $edate) {
+				$edate = 1 * 60 * 60 * 24 * 365;
+				/** @var Response $resp */
+				$resp->warnings [] = 'the requested expire seconds could not be honored. new expire seconds: ' . $edate . ' ( that means ' . date ( DateTime::ATOM, time () + $edate ) . ')';
+			}
 		}
 		$up->expire_date = date ( 'Y-m-d H:i:s', time () + $edate );
 		$resp->expire_date = $up->expire_date;
@@ -181,16 +189,22 @@ function err(string $message, int $status_code = 1, int $http_error_code = 400) 
 	$resp->message = 'error: ' . $message;
 	die ();
 }
-function validate_api_token(int $user_id, string $token): bool {
+function validate_api_token(string $token, int &$user_id = NULL): bool {
 	if ($user_id === 1) {
 		// ANONYMOUS_UPLOADS_NEEDS_NO_TOKEN
 		return true;
 	}
+	// TODO: is this timming-attack safe?
 	global $db;
-	$stm = $db->prepare ( 'SELECT COUNT(*) FROM users WHERE id = ? AND api_token = ? AND api_token IS NOT NULL' );
+	$stm = $db->prepare ( 'SELECT id FROM users WHERE api_token = ? AND api_token IS NOT NULL' );
 	$stm->execute ( array (
-			$user_id,
 			$token 
 	) );
-	return ! ! ($stm->fetchAll ( PDO::FETCH_NUM ) [0] [0]);
+	$row = $stm->fetch ( PDO::FETCH_NUM );
+	if (empty ( $row )) {
+		// no such api token...
+		return false;
+	}
+	$user_id = $row [0];
+	return true;
 }

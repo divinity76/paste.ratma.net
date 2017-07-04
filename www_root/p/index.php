@@ -113,11 +113,32 @@ body {
 <body>
 <span>
 <?php
+function human_filesize(int $size, int $precision = 2): string {
+	$units = array (
+			'B',
+			'kB',
+			'MB',
+			'GB',
+			'TB',
+			'PB',
+			'EB',
+			'ZB',
+			'YB' 
+	);
+	$step = 1024;
+	$i = 0;
+	while ( ($size / $step) > 0.9 ) {
+		$size = $size / $step;
+		++ $i;
+	}
+	return round ( $size, $precision ) . $units [$i];
+}
 echo 'name: ' . tohtml ( ( string ) $row->filename ) . "<br/>\n";
 echo 'type: ' . tohtml ( ( string ) $row->content_type ) . "<br/>\n";
 echo 'upload date: ' . tohtml ( ( string ) $row->upload_date ) . "<br/>\n";
 echo 'expire date: ' . tohtml ( ( string ) $row->expire_date ) . " (that means " . abs ( number_format ( ((time () - strtotime ( $row->expire_date )) / 60 / 60 / 24), 0 ) ) . " days remains )<br/>\n";
-echo 'size: ' . tohtml ( ( string ) $row->raw_file_size ) . ' (in bytes)' . "<br/>\n";
+echo 'size: <span id="human_filesize">' . tohtml ( human_filesize ( $row->raw_file_size ) ) . "</span><br/>\n";
+echo 'bytes: <span id="bytes">' . tohtml ( ( string ) ($row->raw_file_size) ) . "</span><br/>\n";
 ?>
 </span>
 	<pre style="background-color: aliceblue;" class="prettyprint"

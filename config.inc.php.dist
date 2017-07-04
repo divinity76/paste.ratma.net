@@ -6,3 +6,7 @@ $db = new \PDO ( 'mysql:host=ratma.net;dbname=paste.ratma.net;charset=utf8mb4', 
 	// \PDO::MYSQL_ATTR_COMPRESS => true
 ) );
 define ( 'UPLOAD_DIR', __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR );
+class RecaptchaConfig {
+	const SITE_KEY = '???';
+	const SECRET_KEY = '???';
+}

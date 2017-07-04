@@ -144,7 +144,7 @@ echo 'bytes: <span id="bytes">' . tohtml ( ( string ) ($row->raw_file_size) ) . 
 	<pre style="background-color: aliceblue;" class="prettyprint"
 		id="paste_raw">
 <?php
-echo tohtml ( file_get_contents ( __DIR__ . '/../../uploads/' . $row->raw_file_id ) );
+echo tohtml ( file_get_contents ( UPLOAD_DIR . $row->raw_file_id ) );
 ?>
 </pre>
 </body>

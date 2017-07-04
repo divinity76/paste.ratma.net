@@ -138,7 +138,7 @@ echo 'size: <span id="human_filesize">' . tohtml ( human_filesize ( $row->raw_fi
 echo 'bytes: <span id="bytes">' . tohtml ( ( string ) ($row->raw_file_size) ) . "</span><br/>\n";
 ?>
 </span>
-	<pre style="background-color: aliceblue;" class="prettyprint"
+	<pre style="background-color: aliceblue;" class="prettyprint linenums"
 		id="paste_raw">
 <?php
 echo tohtml ( file_get_contents ( UPLOAD_DIR . $row->raw_file_id ) );
